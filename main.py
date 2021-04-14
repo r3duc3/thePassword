@@ -45,8 +45,11 @@ class SimpleCompleter(object):
 
 class Password:
 	def __init__(self):
+		# color
 		self.clr = tuple([chr(27)+'[1;0m'] + list(chr(27)+'[1;3'+str(x)+'m' for x in range(1,7)))
+		# prompt
 		self.prompt = '{w[1]}_Reduce {w[4]}$ {w[0]}'.format(w=self.clr)
+		# list command & helper
 		self.cmds = (
 			{
 			'cmd': 'help',
@@ -82,10 +85,15 @@ class Password:
 
 	def gen(self, *args):
 		self.debug('g', 'membuat password...')
+		# args = ([blblbl, sasasas], )
+		# args[0] = [blblbl, sasasas]
 		args = args[0]
-		print(args)
 		len_args = len(args)
+
+		# set len pwd
 		lgth = int(args[1]) if len_args >= 2 else 12 if args[0] == 'sandi' else 6
+
+		# set prefix
 		pre = ''
 		if args[0] == 'sandi':
 			if len_args == 3:
@@ -104,16 +112,19 @@ class Password:
 		elif args[0] == 'pin':
 			pre = dgt
 
+		# generating & checking 
 		while 1:
 			rhty = open(f'.history/.{args[0]}', 'r').read()
 			out = ''.join(choices(pre, k = lgth))
 			if out not in rhty:
 				break
 
+		# save password to history
 		shty = open(f'.history/.{args[0]}', 'w')
 		shty.write('\n'+out)
 		shty.close()
 
+		# copy password to clipboard
 		self.debug('g', f'{args[0]}: {out}')
 		self.debug('g', 'menyalin...')
 		pyperclip.copy(out)
@@ -167,6 +178,5 @@ if len(argv) > 1 and len(argv) <= 4:
 while 1:
 	try:
 		pwd.cli()
-	except Exception as ex:
-		print(ex)
+	except:
 		break
