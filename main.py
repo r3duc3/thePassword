@@ -1,19 +1,27 @@
 #!/usr/bin/python3
 
-# -------------------------
-#
-# author: _Reduce
-# made with hand by _Reduce
-# dibuat dikala gabut
-# 
-# -------------------------
+#############################
+# author: _Reduce           #
+# made with hand by _Reduce #
+# dibuat dikala gabut       #
+#############################
 
 # modules
 import pyperclip, readline
 from random import choices
 from sys import argv
-from os import get_terminal_size as gts
+from os import get_terminal_size as gts, uname
 from string import ascii_lowercase as asl, ascii_uppercase as asu, digits as dgt, punctuation as pnc
+
+# module for copy to clipboard
+
+#
+try:
+	import pyperclip
+	from termux.Clipboard import setclipboard as copy
+except:
+	pass
+
 # modules;
 
 # -------------------------
@@ -47,8 +55,10 @@ class Password:
 	def __init__(self):
 		# color
 		self.clr = tuple([chr(27)+'[1;0m'] + list(chr(27)+'[1;3'+str(x)+'m' for x in range(1,7)))
+
 		# prompt
 		self.prompt = '{w[1]}_Reduce {w[4]}$ {w[0]}'.format(w=self.clr)
+
 		# list command & helper
 		self.cmds = (
 			{
@@ -85,8 +95,6 @@ class Password:
 
 	def gen(self, *args):
 		self.debug('g', 'membuat password...')
-		# args = ([blblbl, sasasas], )
-		# args[0] = [blblbl, sasasas]
 		args = args[0]
 		len_args = len(args)
 
@@ -121,14 +129,19 @@ class Password:
 
 		# save password to history
 		shty = open(f'.history/.{args[0]}', 'w')
-		shty.write('\n'+out)
+		shty.write(out+'\n')
 		shty.close()
 
 		# copy password to clipboard
 		self.debug('g', f'{args[0]}: {out}')
 		self.debug('g', 'menyalin...')
-		pyperclip.copy(out)
-		self.debug('g', 'tersalin')
+		try:
+			pyperclip.copy(out)
+		except (pyperclip.PyperclipException):
+			self.debug('r', 'program gak bisa nemuin mekanisme copy/paste pada sistem')
+			self.debug('r', 'gagal menyalin')
+		else:
+			self.debug('g', 'tersalin')
 
 	def cli(self, term=''):
 		if term == '':
@@ -172,11 +185,8 @@ readline.set_completer(SimpleCompleter([x['cmd'] for x in pwd.cmds]).complete)
 readline.parse_and_bind('tab: complete')
 
 if len(argv) > 1 and len(argv) <= 4:
-	pwd.gen(argv[1:])
+	pwd.cli(' '.join(argv[1:]))
 	exit()
 
 while 1:
-	try:
-		pwd.cli()
-	except:
-		break
+	pwd.cli()
