@@ -15,7 +15,8 @@ try:
 	from random import choices
 	from sys import argv
 	from time import sleep as sl
-	from os import get_terminal_size as gts, name, system
+	from os import get_terminal_size as gts, name, system, mkdir
+	from os.path import exists as exs
 	from string import ascii_lowercase as asl, ascii_uppercase as asu, digits as dgt, punctuation as pnc
 except Exception as ex:
     exit(ex)
@@ -95,6 +96,7 @@ class Password:
 		self.debug('g', 'membuat password...')
 		args = args[0]
 		len_args = len(args)
+		path = f'.history/.{args[0]}'
 
 		# set len pwd
 		lgth = int(args[1]) if len_args >= 2 else 12 if args[0] == 'sandi' else 6
@@ -118,15 +120,22 @@ class Password:
 		elif args[0] == 'pin':
 			pre = dgt
 
+		# check existsence before generate
+		if not exs('.history'):
+			mkdir('.history')
+
+		if not exs(path):
+			open(path, 'w')
+
 		# generating & checking 
 		while 1:
-			rhty = open(f'.history/.{args[0]}', 'r').read()
+			rhty = open(path, 'r').read()
 			out = ''.join(choices(pre, k = lgth))
 			if out not in rhty:
 				break
 
 		# save password to history
-		shty = open(f'.history/.{args[0]}', 'w')
+		shty = open(path, 'w')
 		shty.write(out+'\n')
 		shty.close()
 
