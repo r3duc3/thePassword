@@ -149,11 +149,12 @@ class Password:
 		self.cmd = self.cmd.split()
 		if len(self.cmd) == 0:
 			return False
+
 		if self.cmd[0] == 'help':
 			self.hlp()
 		elif self.cmd[0] == 'quit':
 			exit()
-		elif self.cmd[0] == 'sandi' or self.cmd[0] == 'pin':
+		elif self.cmd[0] in ('sandi', 'pin'):
 			self.gen(self.cmd)
 		else:
 			self.debug('r', f'{self.cmd[0]}: command gak ketemu')
