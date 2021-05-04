@@ -1,26 +1,24 @@
 #!/usr/bin/python3
 
-#############################
+banner = '''############ beta ###########
+#                           #
 # author: _Reduce           #
 # made with hand by _Reduce #
 # dibuat dikala gabut       #
+#                           #
 #############################
+'''
 
 # modules
-import pyperclip, readline
-from random import choices
-from sys import argv
-from os import get_terminal_size as gts, uname
-from string import ascii_lowercase as asl, ascii_uppercase as asu, digits as dgt, punctuation as pnc
-
-# module for copy to clipboard
-
-#
 try:
-	import pyperclip
-	from termux.Clipboard import setclipboard as copy
-except:
-	pass
+	import pyperclip, readline
+	from random import choices
+	from sys import argv
+	from time import sleep as sl
+	from os import get_terminal_size as gts, name, system
+	from string import ascii_lowercase as asl, ascii_uppercase as asu, digits as dgt, punctuation as pnc
+except Exception as ex:
+    exit(ex)
 
 # modules;
 
@@ -137,8 +135,7 @@ class Password:
 		self.debug('g', 'menyalin...')
 		try:
 			pyperclip.copy(out)
-		except (pyperclip.PyperclipException):
-			self.debug('r', 'program gak bisa nemuin mekanisme copy/paste pada sistem')
+		except pyperclip.PyperclipException:
 			self.debug('r', 'gagal menyalin')
 		else:
 			self.debug('g', 'tersalin')
@@ -184,9 +181,16 @@ fl = lambda: print(f'\r{" "*gts().columns}', end='')
 readline.set_completer(SimpleCompleter([x['cmd'] for x in pwd.cmds]).complete)
 readline.parse_and_bind('tab: complete')
 
+# inline
 if len(argv) > 1 and len(argv) <= 4:
 	pwd.cli(' '.join(argv[1:]))
 	exit()
+
+# prompt
+system('clear' if name == 'posix' else 'cls')
+for _ in banner:
+	print(_, end='', flush=1)
+	sl(0.005)
 
 while 1:
 	pwd.cli()
