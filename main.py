@@ -11,15 +11,20 @@ banner = '''############ beta ###########
 
 # modules
 try:
-	import pyperclip, readline
+	import readline
 	from random import choices
 	from sys import argv
 	from time import sleep as sl
 	from os import get_terminal_size as gts, name, system, mkdir
 	from os.path import exists as exs
 	from string import ascii_lowercase as asl, ascii_uppercase as asu, digits as dgt, punctuation as pnc
+	from pyperclip import copy, PyperclipException
+
+	if 'com.termux' in readline.__file__:
+		from sh import termux_clipboard_set as copy
 except Exception as ex:
-    exit(ex)
+	print(ex)
+	exit(f'install: python3 -m pip install {ex.name}')
 
 # modules;
 
@@ -120,7 +125,7 @@ class Password:
 		elif args[0] == 'pin':
 			pre = dgt
 
-		# check existsence before generate
+		# check existence before generate
 		if not exs('.history'):
 			mkdir('.history')
 
@@ -143,8 +148,8 @@ class Password:
 		self.debug('g', f'{args[0]}: {out}')
 		self.debug('g', 'menyalin...')
 		try:
-			pyperclip.copy(out)
-		except pyperclip.PyperclipException:
+			copy(out)
+		except PyperclipException:
 			self.debug('r', 'gagal menyalin')
 		else:
 			self.debug('g', 'tersalin')
@@ -203,4 +208,7 @@ for _ in banner:
 	sl(0.005)
 
 while 1:
-	pwd.cli()
+	try:
+		pwd.cli()
+	except KeyboardInterrupt:
+		exit('')
