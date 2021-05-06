@@ -192,7 +192,6 @@ class Password:
 		print('\n*Note: klik tab untuk autocomplete')
 
 pwd = Password()
-fl = lambda: print(f'\r{" "*gts().columns}', end='')
 readline.set_completer(SimpleCompleter([x['cmd'] for x in pwd.cmds]).complete)
 readline.parse_and_bind('tab: complete')
 
