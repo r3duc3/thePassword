@@ -98,7 +98,7 @@ class Password:
 		)
 
 	def gen(self, *args):
-		self.debug('g', 'membuat password...')
+		self.debug('g', 'membuat password...\n')
 		args = args[0]
 		len_args = len(args)
 		path = f'.history/.{args[0]}'
@@ -132,11 +132,20 @@ class Password:
 		if not exs(path):
 			open(path, 'w')
 
-		# generating & checking 
+		# generating & checking
 		while 1:
 			rhty = open(path, 'r').read()
 			out = ''.join(choices(pre, k = lgth))
 			if out not in rhty:
+				self.debug('g', f'{args[0]}: {out}\n')
+				self.debug('c', 'Confirm[Y/n] ')
+				yes = input().lower()
+				if yes not in ['y', 'n']:
+					yes = 'y'
+				
+				if yes == 'n':
+					continue
+
 				break
 
 		# save password to history
@@ -145,14 +154,13 @@ class Password:
 		shty.close()
 
 		# copy password to clipboard
-		self.debug('g', f'{args[0]}: {out}')
 		self.debug('g', 'menyalin...')
 		try:
 			copy(out)
 		except PyperclipException:
-			self.debug('r', 'gagal menyalin')
+			self.debug('r', '\ngagal menyalin\n')
 		else:
-			self.debug('g', 'tersalin')
+			self.debug('g', 'tersalin\n')
 
 	def cli(self, term=''):
 		if term == '':
@@ -171,7 +179,7 @@ class Password:
 		elif self.cmd[0] in ('sandi', 'pin'):
 			self.gen(self.cmd)
 		else:
-			self.debug('r', f'{self.cmd[0]}: command gak ketemu')
+			self.debug('r', f'{self.cmd[0]}: command gak ketemu\n')
 
 	def debug(self, clr, txt):
 		d = self.clr[0]
@@ -179,8 +187,11 @@ class Password:
 			a, b, c = self.clr[1], self.clr[3], '!'
 		elif clr == 'g':
 			a, b, c = self.clr[2], self.clr[6], '*'
+		elif clr == 'c':
+			a, b, c = self.clr[4], self.clr[5], '?'
 
-		print(f'{d}[{a}{c}{d}] {b}{txt}{d}')
+		print(f'\r{" "*gts().columns}', end='')
+		print(f'\r{d}[{a}{c}{d}] {b}{txt}{d}', end='', flush=1)
 
 	def hlp(self):
 		for cmd in self.cmds:
