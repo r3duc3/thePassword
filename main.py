@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-banner = '''############ beta ###########
+banner = '''########### 4.2-B ###########
 #                           #
 # author: _Reduce           #
 # made with hand by _Reduce #
@@ -15,6 +15,7 @@ try:
 	from random import choices
 	from sys import argv
 	from time import sleep as sl
+	from getpass import getuser
 	from os import get_terminal_size as gts, name, system, mkdir
 	from os.path import exists as exs
 	from string import ascii_lowercase as asl, ascii_uppercase as asu, digits as dgt, punctuation as pnc
@@ -61,7 +62,7 @@ class Password:
 		self.clr = tuple([chr(27)+'[1;0m'] + list(chr(27)+'[1;3'+str(x)+'m' for x in range(1,7)))
 
 		# prompt
-		self.prompt = '{w[1]}_Reduce {w[4]}$ {w[0]}'.format(w=self.clr)
+		self.prompt = '{w[1]}{who}@thePassword {w[4]}$ {w[0]}'.format(w=self.clr, who=getuser())
 
 		# list command & helper
 		self.cmds = (
@@ -138,7 +139,7 @@ class Password:
 			out = ''.join(choices(pre, k = lgth))
 			if out not in rhty:
 				self.debug('g', f'{args[0]}: {out}\n')
-				self.debug('c', 'Confirm[Y/n] ')
+				self.debug('c', 'Konfirmasi[Y/n] ')
 				yes = input().lower()
 				if yes not in ['y', 'n']:
 					yes = 'y'
