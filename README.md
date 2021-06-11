@@ -3,6 +3,6 @@ Password generator
 
 ![ss](https://i.ibb.co/N64nZfL/beta.png)
 
-## Feature
+## Features
 - bikin password
 - otomatis copy password
