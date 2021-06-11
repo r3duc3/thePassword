@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-banner = '''########### 4.8-B ###########
+banner = '''########### 7.3-A ###########
 #                           #
 # author: _Reduce           #
 # made with hand by _Reduce #
@@ -16,6 +16,7 @@ try:
 	from sys import argv
 	from time import sleep as sl
 	from getpass import getuser
+	from json import loads as jload, dumps as jdump
 	from os import get_terminal_size as gts, name, system, mkdir
 	from os.path import exists as exs
 	from string import ascii_lowercase as asl, ascii_uppercase as asu, digits as dgt, punctuation as pnc
@@ -64,6 +65,9 @@ class Password:
 		# prompt
 		self.prompt = '{w[1]}{who}@thePassword {w[4]}$ {w[0]}'.format(w=self.clr, who=getuser())
 
+		# path
+		self.path = f'.saved.json'
+
 		# list command & helper
 		self.cmds = (
 			{
@@ -97,6 +101,12 @@ class Password:
 			\rdefault panjang 6'''
 			},
 			{
+			'cmd': 'get',
+			'desc': '''ambil password yang sudah disimpan
+			\rcommand: get (site)
+			\rdefault: list site untuk dipilih'''
+			},
+			{
 			'cmd': 'clean',
 			'desc': 'bersihin layar'
 			}
@@ -110,15 +120,35 @@ class Password:
 			print(_, end='', flush=1)
 			sl(0.005)
 
-	def auto(self, val, opt=[]):
+	def important(self, name):
+		# to infinity and beyond
+		var = ''
+		while not bool(var):
+			self.debug('c', f'*{name}: ')
+			var = input()
+
+		return var
+
+	def auto(self, opt=[]):
 		readline.set_completer(SimpleCompleter(opt).complete)
-		readline.parse_and_bind(f'tab: {val}')
+		readline.parse_and_bind(f'tab: {"complete" if opt else "nothing"}')
 
 	def gen(self, *args):
+		# disable autocomplete
+		self.auto()
+
 		self.debug('g', 'membuat password...\n')
+
+		# site & uname is important
+		site = self.important('Site')
+		uname = self.important('Username')
+
+		# var tambahan
+		self.debug('c', 'tambahan: ')
+		other = input()
+
 		args = args[0]
 		len_args = len(args)
-		path = f'.history/.{args[0]}'
 
 		# set len pwd
 		lgth = int(args[1]) if len_args >= 2 else 12 if args[0] == 'sandi' else 6
@@ -142,21 +172,19 @@ class Password:
 		elif args[0] == 'pin':
 			pre = dgt
 
-		# check existence before generate
-		if not exs('.history'):
-			mkdir('.history')
-
-		if not exs(path):
-			open(path, 'w')
+		# get history
+		if exs(self.path):
+			hty = jload(open(self.path, 'r').read())
+		else:
+			hty = []
 
 		# generating & checking
 		while 1:
-			rhty = open(path, 'r').read()
+			rhty = [x['password'] for x in hty] if hty else []
 			out = ''.join(choices(pre, k = lgth))
 			if out not in rhty:
 				self.debug('g', f'{args[0]}: {out}\n')
 				self.debug('c', 'Konfirmasi[Y/n] ')
-				self.auto('nothing')
 				yes = input().lower()
 				if yes not in ['y', 'n']:
 					yes = 'y'
@@ -167,9 +195,13 @@ class Password:
 				break
 
 		# save password to history
-		shty = open(path, 'a')
-		shty.write(out+'\n')
-		shty.close()
+		hty.append({
+			'site': site,
+			'username': uname,
+			'password': out,
+			'other': other
+		})
+		open(self.path, 'w').write(jdump(hty))
 
 		# copy password to clipboard
 		self.debug('g', f'menyalin {args[0]}...')
@@ -180,9 +212,34 @@ class Password:
 		else:
 			self.debug('g', f'{args[0]} tersalin\n')
 
+	def getter(self):
+		# get history
+		if exs(self.path):
+			hty = jload(open(self.path, 'r').read())
+		else:
+			hty = []
+
+		if not hty:
+			self.debug('r', 'tidak ada password yang tersimpan\n')
+			return
+
+		self.auto([x['site'] for x in hty])
+		site = input('Site: ')
+		if not bool(site):
+			return
+
+		self.clean()
+		for x in hty:
+			if x['site'] == site:
+				print('\x1b[1;0m='*round(gts().columns))
+				for y, z in x.items():
+					print('{w[2]}{name}     : {w[6]}{val}'.format(w=self.clr, name=y.title(), val=z))
+
+		print('\x1b[1;0m='*round(gts().columns))
+
 	def cli(self, term=''):
 		if term == '':
-			self.auto('complete', [x['cmd'] for x in self.cmds])
+			self.auto([x['cmd'] for x in self.cmds])
 			self.cmd = input(self.prompt)
 		else:
 			self.cmd = term
@@ -199,6 +256,8 @@ class Password:
 			self.gen(self.cmd)
 		elif self.cmd[0] == 'clean':
 			self.clean()
+		elif self.cmd[0] == 'get':
+			self.getter()
 		else:
 			self.debug('r', f'{self.cmd[0]}: command gak ketemu\n')
 
