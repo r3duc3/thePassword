@@ -1,10 +1,4 @@
-# thePassword[BETA]
+# thePassword[ALPHA]
 Password generator
 
-![ss](https://i.ibb.co/NVk0t89/sekrinshut.png)
-
-\*Note: klik tab untuk autocomplete
-
-## Requirements
-- [python](https://www.python.org/downloads/) latest
-- package [pyperclip](https://pypi.org/project/pyperclip3/)
+![ss](https://i.ibb.co/m90d14F/alpha.png)
