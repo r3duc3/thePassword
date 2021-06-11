@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-banner = '''########### 4.3-B ###########
+banner = '''########### 4.4-B ###########
 #                           #
 # author: _Reduce           #
 # made with hand by _Reduce #
@@ -150,7 +150,7 @@ class Password:
 				break
 
 		# save password to history
-		shty = open(path, 'w')
+		shty = open(path, 'a')
 		shty.write(out+'\n')
 		shty.close()
 
