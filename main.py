@@ -110,11 +110,14 @@ class Password:
 			print(_, end='', flush=1)
 			sl(0.005)
 
-	def auto(self, val, opt=[]):
+	def auto(self, opt=[]):
 		readline.set_completer(SimpleCompleter(opt).complete)
-		readline.parse_and_bind(f'tab: {val}')
+		readline.parse_and_bind(f'tab: {"complete" if opt else "nothing"}')
 
 	def gen(self, *args):
+		# disable autocomplete
+		self.auto()
+
 		self.debug('g', 'membuat password...\n')
 		args = args[0]
 		len_args = len(args)
@@ -156,7 +159,6 @@ class Password:
 			if out not in rhty:
 				self.debug('g', f'{args[0]}: {out}\n')
 				self.debug('c', 'Konfirmasi[Y/n] ')
-				self.auto('nothing')
 				yes = input().lower()
 				if yes not in ['y', 'n']:
 					yes = 'y'
@@ -182,7 +184,8 @@ class Password:
 
 	def cli(self, term=''):
 		if term == '':
-			self.auto('complete', [x['cmd'] for x in self.cmds])
+			# create autocomplete
+			self.auto([x['cmd'] for x in self.cmds])
 			self.cmd = input(self.prompt)
 		else:
 			self.cmd = term
