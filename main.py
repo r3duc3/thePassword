@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-banner = '''########### 4.5-B ###########
+banner = '''########### 4.8-B ###########
 #                           #
 # author: _Reduce           #
 # made with hand by _Reduce #
@@ -110,6 +110,10 @@ class Password:
 			print(_, end='', flush=1)
 			sl(0.005)
 
+	def auto(self, val, opt=[]):
+		readline.set_completer(SimpleCompleter(opt).complete)
+		readline.parse_and_bind(f'tab: {val}')
+
 	def gen(self, *args):
 		self.debug('g', 'membuat password...\n')
 		args = args[0]
@@ -152,6 +156,7 @@ class Password:
 			if out not in rhty:
 				self.debug('g', f'{args[0]}: {out}\n')
 				self.debug('c', 'Konfirmasi[Y/n] ')
+				self.auto('nothing')
 				yes = input().lower()
 				if yes not in ['y', 'n']:
 					yes = 'y'
@@ -177,6 +182,7 @@ class Password:
 
 	def cli(self, term=''):
 		if term == '':
+			self.auto('complete', [x['cmd'] for x in self.cmds])
 			self.cmd = input(self.prompt)
 		else:
 			self.cmd = term
@@ -218,8 +224,6 @@ class Password:
 		print('\n*Note: klik tab untuk autocomplete')
 
 pwd = Password()
-readline.set_completer(SimpleCompleter([x['cmd'] for x in pwd.cmds]).complete)
-readline.parse_and_bind('tab: complete')
 
 # inline
 if len(argv) > 1 and len(argv) <= 4:
