@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-banner = '''########### 4.2-B ###########
+banner = '''########### 4.3-B ###########
 #                           #
 # author: _Reduce           #
 # made with hand by _Reduce #
@@ -155,13 +155,13 @@ class Password:
 		shty.close()
 
 		# copy password to clipboard
-		self.debug('g', 'menyalin...')
+		self.debug('g', f'menyalin {args[0]}...')
 		try:
 			copy(out)
 		except PyperclipException:
 			self.debug('r', '\ngagal menyalin\n')
 		else:
-			self.debug('g', 'tersalin\n')
+			self.debug('g', f'{args[0]} tersalin\n')
 
 	def cli(self, term=''):
 		if term == '':
