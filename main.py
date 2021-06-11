@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-banner = '''########### 4.4-B ###########
+banner = '''########### 4.5-B ###########
 #                           #
 # author: _Reduce           #
 # made with hand by _Reduce #
@@ -95,8 +95,20 @@ class Password:
 			\rcommand: pin (panjang)
 			\rex: pin 100
 			\rdefault panjang 6'''
+			},
+			{
+			'cmd': 'clean',
+			'desc': 'bersihin layar'
 			}
 		)
+
+		self.clean()
+
+	def clean(self):
+		system('clear' if name == 'posix' else 'cls')
+		for _ in banner:
+			print(_, end='', flush=1)
+			sl(0.005)
 
 	def gen(self, *args):
 		self.debug('g', 'membuat password...\n')
@@ -179,6 +191,8 @@ class Password:
 			exit()
 		elif self.cmd[0] in ('sandi', 'pin'):
 			self.gen(self.cmd)
+		elif self.cmd[0] == 'clean':
+			self.clean()
 		else:
 			self.debug('r', f'{self.cmd[0]}: command gak ketemu\n')
 
@@ -213,11 +227,6 @@ if len(argv) > 1 and len(argv) <= 4:
 	exit()
 
 # prompt
-system('clear' if name == 'posix' else 'cls')
-for _ in banner:
-	print(_, end='', flush=1)
-	sl(0.005)
-
 while 1:
 	try:
 		pwd.cli()
